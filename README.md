@@ -18,7 +18,6 @@ Este é um guia detalhado para instalar a aplicação Front-end que foi desenvol
 - Git
 - Node.js
 - Yarn
--
 
 ## Passo a Passo
 
