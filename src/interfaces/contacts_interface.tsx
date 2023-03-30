@@ -9,7 +9,7 @@ export interface IContact {
   created_at: Date;
   updated_at: Date;
 }
-export interface IContactUpdate {
+export interface IContactRegister {
   full_name: string;
   email: string;
   telephone: number;

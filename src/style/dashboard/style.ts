@@ -11,19 +11,10 @@ export const DashboardStyle = styled.section`
   width: 20rem;
   height: 30rem;
   position: relative;
-  & input[type="button"] {
-    background-color: var(--Negative);
-    border: none;
-    border-radius: 50px;
-    position: absolute;
-    margin-top: -1.2rem;
-    margin-left: 21.5rem;
-    cursor: pointer;
-    font-weight: 600;
-  }
-
   & nav {
     width: 100%;
+    display: flex;
+    flex-direction: row;
     & input[type="search"] {
       border-radius: 50px;
       border: none;
@@ -38,5 +29,23 @@ export const DashboardStyle = styled.section`
       }
     }
   }
-  
+`;
+
+export const ButtonAddCont = styled.button`
+  background-color: transparent;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  color: var(--Sucess);
+  font-size: 22px;
+`;
+
+export const ButtonExit = styled.button`
+  background-color: transparent;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--Negative);
 `;

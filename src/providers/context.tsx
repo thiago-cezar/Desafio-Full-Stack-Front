@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { IContact, IContactUpdate } from "../interfaces/contacts_interface";
+import { IContact, IContactRegister } from "../interfaces/contacts_interface";
 import {
   IChildrenProps,
   IContextInterface,
@@ -20,12 +20,13 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
   const [user, setUser] = useState<IUser>({} as IUser);
   const [contacts, setContacts] = useState<IContact[]>([]);
   const [filterCont, setFilterCont] = useState<IContact[]>([]);
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState({ isModal: false, type: "" });
+  const [contactEdit, setContactEdit] = useState({} as IContact);
 
   const token = localStorage.getItem("@token");
 
-  function isModal() {
-    setModal(!modal);
+  function isModal(key: string) {
+    setModal({ isModal: !modal.isModal, type: key });
   }
 
   const signIn = async (data: IUserLogin) => {
@@ -74,7 +75,7 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
     await api
       .post("/users", data)
       .then((res) => {
-        toast.success("Conta criada com sucesso!", {
+        toast.success("Account created successfully!", {
           style: {
             borderRadius: "10px",
             background: "var( --Grey-2)",
@@ -86,7 +87,34 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
         navigate("/", { replace: true });
       })
       .catch((err) =>
-        toast.error("Ops! Algo deu errado", {
+        toast.error("Oops! Something went wrong", {
+          style: {
+            borderRadius: "10px",
+            background: "var( --Grey-2)",
+            color: "var(--Grey-0)",
+            fontSize: "14px",
+            fontWeight: "700",
+          },
+        })
+      );
+  };
+  const contactRegister = async (data: IContactRegister) => {
+    await api
+      .post("/user/contacts/", data)
+      .then((res) => {
+        toast.success("Contact successfully registered!", {
+          style: {
+            borderRadius: "10px",
+            background: "var( --Grey-2)",
+            color: "var(--Grey-0)",
+            fontSize: "14px",
+            fontWeight: "700",
+          },
+        });
+        isModal("");
+      })
+      .catch((err) =>
+        toast.error("Oops! Something went wrong", {
           style: {
             borderRadius: "10px",
             background: "var( --Grey-2)",
@@ -114,7 +142,7 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
         setFilterCont((old) => old.filter((elem) => elem.id !== id));
       })
       .catch((err) =>
-        toast.error("Erro", {
+        toast.error("Oops! Something went wrong", {
           style: {
             borderRadius: "10px",
             background: "var( --Grey-2)",
@@ -125,12 +153,12 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
         })
       );
   };
-  const contactUpdate = async (data: IContactUpdate, id:string) => {
+  const contactUpdate = async (data: IContactRegister) => {
     api.defaults.headers.common.authorization = `Bearer ${token}`;
     await api
-      .patch(`/user/contacts/${id}`)
+      .patch(`/user/contacts/${modal.type}`, data)
       .then((res) => {
-        toast.success("Contact deleted successfully!", {
+        toast.success("Contact update successfully!", {
           style: {
             borderRadius: "10px",
             background: "var( --Grey-2)",
@@ -139,10 +167,10 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
             fontWeight: "700",
           },
         });
-        setFilterCont((old) => old.filter((elem) => elem.id !== id));
+        isModal("");
       })
       .catch((err) =>
-        toast.error("Erro", {
+        toast.error("Oops! Something went wrong", {
           style: {
             borderRadius: "10px",
             background: "var( --Grey-2)",
@@ -162,7 +190,7 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
       }
     }
     dateContact();
-  }, [token]);
+  }, [token, modal]);
 
   return (
     <AuthContext.Provider
@@ -180,7 +208,11 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
         contactDelete,
         modal,
         setModal,
-        isModal
+        isModal,
+        contactRegister,
+        contactUpdate,
+        setContactEdit,
+        contactEdit,
       }}
     >
       {children}
